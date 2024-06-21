@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"terraform-provider-dbsnapper/internal/client"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -29,7 +30,7 @@ func NewTargetResource() resource.Resource {
 
 // targetResource defines the resource implementation.
 type targetResource struct {
-	client *DBSnapper
+	client *client.DBSnapper
 }
 
 type TargetResourceModel struct {
@@ -154,7 +155,7 @@ func (r *targetResource) Configure(ctx context.Context, req resource.ConfigureRe
 		return
 	}
 
-	client, ok := req.ProviderData.(*DBSnapper)
+	client, ok := req.ProviderData.(*client.DBSnapper)
 
 	if !ok {
 		resp.Diagnostics.AddError(

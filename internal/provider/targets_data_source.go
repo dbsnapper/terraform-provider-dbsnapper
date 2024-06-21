@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"terraform-provider-dbsnapper/internal/client"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -22,7 +23,7 @@ func NewTargetsDataSource() datasource.DataSource {
 
 // TargetsDataSource is the data source implementation.
 type TargetsDataSource struct {
-	client *DBSnapper
+	client *client.DBSnapper
 }
 
 // TargetsDataSourceModel maps the data source schema data.
@@ -183,7 +184,7 @@ func (d *TargetsDataSource) Configure(_ context.Context, req datasource.Configur
 		return
 	}
 
-	client, ok := req.ProviderData.(*DBSnapper)
+	client, ok := req.ProviderData.(*client.DBSnapper)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",

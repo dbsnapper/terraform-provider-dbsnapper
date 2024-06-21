@@ -1,4 +1,4 @@
-package provider
+package client
 
 import (
 	"github.com/joescharf/dbsnapper/v2/apiv1"

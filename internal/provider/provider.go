@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"os"
+	"terraform-provider-dbsnapper/internal/client"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
@@ -104,7 +105,7 @@ func (p *dbSnapperProvider) Configure(ctx context.Context, req provider.Configur
 	}
 
 	// Create client with configuration values
-	dbs := NewDBSnapper(authtoken, baseURL)
+	dbs := client.NewDBSnapper(authtoken, baseURL)
 	if !dbs.IsReady {
 		resp.Diagnostics.AddError("Failed to create DBSnapper API client", "API Not Ready")
 		return
@@ -115,9 +116,14 @@ func (p *dbSnapperProvider) Configure(ctx context.Context, req provider.Configur
 
 }
 
+type Resourcer interface {
+	GetResource() *resource.Resource
+}
+
 func (p *dbSnapperProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
 		NewTargetResource,
+		NewStorageProviderResource,
 	}
 }
 
