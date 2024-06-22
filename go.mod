@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.23.0
 	github.com/hashicorp/terraform-plugin-log v0.9.0
 	github.com/hashicorp/terraform-plugin-testing v1.8.0
-	github.com/joescharf/dbsnapper/v2 v2.7.2
+	github.com/joescharf/dbsnapper/v2 v2.7.3
 )
 
 require (
@@ -181,4 +181,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/joescharf/dbsnapper/v2 v2.7.2 => /Users/joescharf/app/dbsnapper/agent
+// replace github.com/joescharf/dbsnapper/v2 v2.7.2 => /Users/joescharf/app/dbsnapper/agent

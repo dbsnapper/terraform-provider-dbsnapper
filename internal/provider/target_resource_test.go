@@ -1,12 +1,26 @@
 package provider
 
 import (
+	"log"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
+func setupSuite(t *testing.T) func(t *testing.T) {
+	log.Println("setup suite")
+
+	// Return a function to teardown the test
+	return func(t *testing.T) {
+		log.Println("teardown suite")
+	}
+}
+
 func TestAccTargetResource(t *testing.T) {
+
+	teardownSuite := setupSuite(t)
+	defer teardownSuite(t)
+
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

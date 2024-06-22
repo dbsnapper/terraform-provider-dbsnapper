@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/joescharf/dbsnapper/v2/storage"
 )
 
 // Ensure the implementation satisfies the expected interfaces.
@@ -88,6 +89,16 @@ func (d *TargetsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 									Description: "The size of the source database in bytes",
 									Computed:    true,
 								},
+								"storage_profile": schema.SingleNestedAttribute{
+									Description: "Storage provider configuration for Snapshots",
+									Optional:    true,
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Description: "The unique identifier for the storage profile",
+											Optional:    true,
+										},
+									},
+								},
 							},
 						},
 
@@ -102,6 +113,16 @@ func (d *TargetsDataSource) Schema(_ context.Context, _ datasource.SchemaRequest
 								"query": schema.StringAttribute{
 									Description: "The query used to sanitize the snapshot",
 									Computed:    true,
+								},
+								"storage_profile": schema.SingleNestedAttribute{
+									Description: "Storage provider configuration for Sanitized Snapshots",
+									Optional:    true,
+									Attributes: map[string]schema.Attribute{
+										"id": schema.StringAttribute{
+											Description: "The unique identifier for the storage profile",
+											Optional:    true,
+										},
+									},
 								},
 							},
 						},
@@ -135,6 +156,14 @@ func (d *TargetsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 	// }
 	for _, target := range targets {
 		idstr := target.ID.String()
+		snapStorageProfile := ""
+		sanStorageProfile := ""
+		if target.Snapshot.StorageProfile != (storage.StorageProfile{}) {
+			snapStorageProfile = target.Snapshot.StorageProfile.ID.String()
+		}
+		if target.Sanitize.StorageProfile != nil {
+			sanStorageProfile = target.Sanitize.StorageProfile.ID.String()
+		}
 		targetState := TargetResourceModel{
 
 			ID:       types.StringValue(idstr),
@@ -145,10 +174,16 @@ func (d *TargetsDataSource) Read(ctx context.Context, req datasource.ReadRequest
 				SrcURL: types.StringValue(target.Snapshot.SrcURL),
 				DstURL: types.StringValue(target.Snapshot.DstURL),
 				// SrcBytes: types.Int64Value(target.Snapshot.SrcBytes),
+				StorageProfile: &targetStorageProfileModel{
+					ID: types.StringValue(snapStorageProfile),
+				},
 			},
 			Sanitize: &targetSanitizeModel{
 				DstURL: types.StringValue(target.Sanitize.DstURL),
 				Query:  types.StringValue(target.Sanitize.Query),
+				StorageProfile: &targetStorageProfileModel{
+					ID: types.StringValue(sanStorageProfile),
+				},
 			},
 		}
 		// Share

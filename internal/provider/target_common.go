@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	dbsTargetModel "github.com/joescharf/dbsnapper/v2/models/target"
+	"github.com/joescharf/dbsnapper/v2/storage"
 )
 
 func TFToResourceModel(ctx context.Context, tf *TargetResourceModel) (*TargetResourceModel, error) {
@@ -40,7 +41,9 @@ func TFToResourceModel(ctx context.Context, tf *TargetResourceModel) (*TargetRes
 
 func ResourceModelToAPIRequest(ctx context.Context, resourceModel *TargetResourceModel) (*dbsTargetModel.Target, error) {
 	targetRequest := new(dbsTargetModel.Target)
-	targetRequest.Sanitize = dbsTargetModel.SanitizeCfg{}
+	targetRequest.Sanitize = dbsTargetModel.SanitizeCfg{
+		StorageProfile: &storage.StorageProfile{},
+	}
 	targetRequest.Share = dbsTargetModel.ShareCfg{}
 
 	// Copy Snapshot fields
@@ -48,12 +51,20 @@ func ResourceModelToAPIRequest(ctx context.Context, resourceModel *TargetResourc
 		targetRequest.Snapshot.SrcURL = resourceModel.Snapshot.SrcURL.ValueString()
 		targetRequest.Snapshot.DstURL = resourceModel.Snapshot.DstURL.ValueString()
 		targetRequest.Snapshot.SrcBytes = resourceModel.Snapshot.SrcBytes.ValueInt64()
+		if resourceModel.Snapshot.StorageProfile != nil {
+			uid, _ := uuid.Parse(resourceModel.Snapshot.StorageProfile.ID.ValueString())
+			targetRequest.Snapshot.StorageProfile.ID = uid
+		}
 	}
 
 	// Copy the optional Sanitize fields
 	if resourceModel.Sanitize != nil {
 		targetRequest.Sanitize.DstURL = resourceModel.Sanitize.DstURL.ValueString()
 		targetRequest.Sanitize.Query = resourceModel.Sanitize.Query.ValueString()
+		if resourceModel.Sanitize.StorageProfile != nil {
+			uid, _ := uuid.Parse(resourceModel.Sanitize.StorageProfile.ID.ValueString())
+			targetRequest.Sanitize.StorageProfile.ID = uid
+		}
 	}
 
 	// Copy the optional Share fields
@@ -94,11 +105,17 @@ func APIResponseToResourceModel(ctx context.Context, targetApiResponse *dbsTarge
 	resourceModel.Snapshot.SrcURL = types.StringValue(targetApiResponse.Snapshot.SrcURL)
 	resourceModel.Snapshot.DstURL = types.StringValue(targetApiResponse.Snapshot.DstURL)
 	resourceModel.Snapshot.SrcBytes = types.Int64Value(targetApiResponse.Snapshot.SrcBytes)
+	if targetApiResponse.Snapshot.StorageProfile != (storage.StorageProfile{}) {
+		resourceModel.Snapshot.StorageProfile.ID = types.StringValue(targetApiResponse.Snapshot.StorageProfile.ID.String())
+	}
 
 	// Sanitize
 	if targetApiResponse.Sanitize != (dbsTargetModel.SanitizeCfg{}) {
 		resourceModel.Sanitize.DstURL = types.StringValue(targetApiResponse.Sanitize.DstURL)
 		resourceModel.Sanitize.Query = types.StringValue(targetApiResponse.Sanitize.Query)
+		if targetApiResponse.Sanitize.StorageProfile != nil {
+			resourceModel.Sanitize.StorageProfile.ID = types.StringValue(targetApiResponse.Sanitize.StorageProfile.ID.String())
+		}
 	}
 	// Share
 	if targetApiResponse.Share.SsoGroups != nil {

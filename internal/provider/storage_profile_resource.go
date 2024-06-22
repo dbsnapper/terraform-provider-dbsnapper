@@ -78,7 +78,7 @@ func (r *storageProfileResource) Schema(ctx context.Context, req resource.Schema
 				Required:    true,
 			},
 			"sp_provider": schema.StringAttribute{
-				Description: "The provider of the storage profile",
+				Description: "The provider for the storage profile, one of the following: ['s3', 'r2']",
 				Required:    true,
 			},
 			"region": schema.StringAttribute{
@@ -86,25 +86,25 @@ func (r *storageProfileResource) Schema(ctx context.Context, req resource.Schema
 				Optional:    true,
 			},
 			"account_id": schema.StringAttribute{
-				Description: "The account ID of the storage provider - Required for Cloudflare",
+				Description: "The account ID at the storage provider - Required for Cloudflare",
 				Optional:    true,
 			},
 			"access_key": schema.StringAttribute{
-				Description: "The access key of the storage provider",
+				Description: "The access key of the storage profile",
 				Required:    true,
 				Sensitive:   true,
 			},
 			"secret_key": schema.StringAttribute{
-				Description: "The secret key of the storage provider",
+				Description: "The secret key of the storage profile",
 				Required:    true,
 				Sensitive:   true,
 			},
 			"bucket": schema.StringAttribute{
-				Description: "The bucket of the storage provider",
+				Description: "The bucket of the storage profile",
 				Required:    true,
 			},
 			"prefix": schema.StringAttribute{
-				Description: "The prefix of the storage provider",
+				Description: "The prefix of the storage profile",
 				Optional:    true,
 			},
 			"status": schema.StringAttribute{

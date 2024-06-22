@@ -47,20 +47,26 @@ type TargetResourceModel struct {
 
 // targetSnapshotModel maps snapshot data.
 type targetSnapshotModel struct {
-	SrcURL   types.String `tfsdk:"src_url"`
-	DstURL   types.String `tfsdk:"dst_url"`
-	SrcBytes types.Int64  `tfsdk:"src_bytes"`
+	SrcURL         types.String               `tfsdk:"src_url"`
+	DstURL         types.String               `tfsdk:"dst_url"`
+	SrcBytes       types.Int64                `tfsdk:"src_bytes"`
+	StorageProfile *targetStorageProfileModel `tfsdk:"storage_profile"`
 }
 
 // targetSanitizeModel maps sanitization data.
 type targetSanitizeModel struct {
-	DstURL types.String `tfsdk:"dst_url"`
-	Query  types.String `tfsdk:"query"`
+	DstURL         types.String               `tfsdk:"dst_url"`
+	Query          types.String               `tfsdk:"query"`
+	StorageProfile *targetStorageProfileModel `tfsdk:"storage_profile"`
 }
 
 // targetShareModel maps share data.
 type targetShareModel struct {
 	SSOGroups types.List `tfsdk:"sso_groups"`
+}
+
+type targetStorageProfileModel struct {
+	ID types.String `tfsdk:"id"`
 }
 
 func (r *targetResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -116,6 +122,16 @@ func (r *targetResource) Schema(ctx context.Context, req resource.SchemaRequest,
 						Description: "The size of the source database in bytes",
 						Computed:    true,
 					},
+					"storage_profile": schema.SingleNestedAttribute{
+						Description: "Storage provider configuration for Snapshots",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"id": schema.StringAttribute{
+								Description: "The unique identifier for the storage profile",
+								Optional:    true,
+							},
+						},
+					},
 				},
 			},
 
@@ -130,6 +146,16 @@ func (r *targetResource) Schema(ctx context.Context, req resource.SchemaRequest,
 					"query": schema.StringAttribute{
 						Description: "The query used to sanitize the snapshot",
 						Optional:    true,
+					},
+					"storage_profile": schema.SingleNestedAttribute{
+						Description: "Storage provider configuration for Sanitized Snapshots",
+						Optional:    true,
+						Attributes: map[string]schema.Attribute{
+							"id": schema.StringAttribute{
+								Description: "The unique identifier for the storage profile",
+								Optional:    true,
+							},
+						},
 					},
 				},
 			},
