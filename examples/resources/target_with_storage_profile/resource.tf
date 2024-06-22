@@ -1,12 +1,12 @@
 resource "dbsnapper_storage_profile" "tfex" {
-  name = "tf_sp_tfex"
+  name        = "tf_sp_tfex"
   sp_provider = "s3"
-  region = "us-east-1"
-  account_id = ""
-  access_key = "AKIAxxxxxxxx"
-  secret_key = "xxxxxxxxxxxxxxxxxxxx"
-  bucket = "dbsnapper-test-s3"
-  prefix = "terraform"
+  region      = "us-east-1"
+  account_id  = ""
+  access_key  = "AKIAxxxxxxxx"
+  secret_key  = "xxxxxxxxxxxxxxxxxxxx"
+  bucket      = "dbsnapper-test-s3"
+  prefix      = "terraform"
 }
 
 resource "dbsnapper_target" "tfex" {

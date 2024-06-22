@@ -43,10 +43,19 @@ Required:
 Optional:
 
 - `dst_url` (String) The destination URL for the target snapshot (will be overwritten)
+- `storage_profile` (Attributes) Storage provider configuration for Snapshots (see [below for nested schema](#nestedatt--snapshot--storage_profile))
 
 Read-Only:
 
 - `src_bytes` (Number) The size of the source database in bytes
+
+<a id="nestedatt--snapshot--storage_profile"></a>
+### Nested Schema for `snapshot.storage_profile`
+
+Optional:
+
+- `id` (String) The unique identifier for the storage profile
+
 
 
 <a id="nestedatt--sanitize"></a>
@@ -56,6 +65,15 @@ Optional:
 
 - `dst_url` (String) The destination URL of the database used to sanitizea snapshot
 - `query` (String) The query used to sanitize the snapshot
+- `storage_profile` (Attributes) Storage provider configuration for Sanitized Snapshots (see [below for nested schema](#nestedatt--sanitize--storage_profile))
+
+<a id="nestedatt--sanitize--storage_profile"></a>
+### Nested Schema for `sanitize.storage_profile`
+
+Optional:
+
+- `id` (String) The unique identifier for the storage profile
+
 
 
 <a id="nestedatt--share"></a>
